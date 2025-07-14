@@ -19,6 +19,10 @@
                 <label for="pageUrl" class="form-label">Link Halaman Facebook</label>
                 <input type="url" class="form-control" id="pageUrl" placeholder="Masukkan link fanspage (contoh: https://web.facebook.com/profile.php?id=100095302963485)" required>
             </div>
+            <div class="mb-3">
+                <label for="cookie" class="form-label">Cookie</label>
+                <input type="text" class="form-control" id="cookie" placeholder="Masukkan cookie Anda (contoh: c_user=...; xs=...)" required value="datr=Z-eZZ_ALjvcOQk8uYCwgBT1A;sb=aOeZZ7UQfbdcXN6AlTLzQkDG;ps_l=1;ps_n=1;c_user=61577769269344;ar_debug=1;xs=41%3AJNze77rwcrMdXw%3A2%3A1750829898%3A-1%3A-1%3A%3AAcVOku3OOIf9leuEdbPc5ir-28GFU47D1rz1ggoTomg;fr=1ni32CrhPRMx06aVp.AWeageDctVSeJlgXgM2F6a4gOoXIlsoW8YXO4IySAkrtYLwlxO0.BodLbf..AAA.0.0.BodLcl.AWfSIDQDZbDOaSZ4gP36xvW4GQY;dpr=1.100000023841858;presence=EDvF3EtimeF1752479554EuserFA261577769269344A2EstateFDutF0CEchF_7bCC;wd=1455x665;">
+            </div>
             <button type="submit" class="btn btn-primary w-100">Cek Informasi</button>
         </form>
         <div id="result" class="result-card"></div>
@@ -28,13 +32,14 @@
         document.getElementById('fanpageForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const pageUrl = document.getElementById('pageUrl').value;
+            const cookie = document.getElementById('cookie').value;
             const resultDiv = document.getElementById('result');
 
             resultDiv.innerHTML = '<div class="alert alert-info">Memproses...</div>';
 
             try {
-                console.log('Mengirim permintaan untuk URL:', pageUrl);
-                const response = await fetch(`getFanpageInfo.php?url=${encodeURIComponent(pageUrl)}`);
+                console.log('Mengirim permintaan untuk URL:', pageUrl, 'dengan cookie:', cookie);
+                const response = await fetch(`getFanpageInfo.php?url=${encodeURIComponent(pageUrl)}&cookie=${encodeURIComponent(cookie)}`);
                 const data = await response.json();
                 console.log('Respons dari server:', data);
 
