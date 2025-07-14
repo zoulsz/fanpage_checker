@@ -19,10 +19,6 @@
                 <label for="pageUrl" class="form-label">Link Halaman Facebook</label>
                 <input type="url" class="form-control" id="pageUrl" placeholder="Masukkan link fanspage (contoh: https://www.facebook.com/nasa)" required>
             </div>
-            <div class="mb-3">
-                <label for="accessToken" class="form-label">Access Token</label>
-                <input type="text" class="form-control" id="accessToken" placeholder="Masukkan Access Token Anda" required>
-            </div>
             <button type="submit" class="btn btn-primary w-100">Cek Informasi</button>
         </form>
         <div id="result" class="result-card"></div>
@@ -32,14 +28,13 @@
         document.getElementById('fanpageForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const pageUrl = document.getElementById('pageUrl').value;
-            const accessToken = document.getElementById('accessToken').value;
             const resultDiv = document.getElementById('result');
 
             resultDiv.innerHTML = '<div class="alert alert-info">Memproses...</div>';
 
             try {
-                console.log('Mengirim permintaan untuk URL:', pageUrl, 'dengan token:', accessToken);
-                const response = await fetch(`getFanpageInfo.php?url=${encodeURIComponent(pageUrl)}&access_token=${encodeURIComponent(accessToken)}`);
+                console.log('Mengirim permintaan untuk URL:', pageUrl);
+                const response = await fetch(`getFanpageInfo.php?url=${encodeURIComponent(pageUrl)}`);
                 const data = await response.json();
                 console.log('Respons dari server:', data);
 
