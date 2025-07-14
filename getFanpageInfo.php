@@ -20,6 +20,9 @@ function getFanpageInfo($pageUrl, $cookie) {
     curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Batas waktu 30 detik
     curl_setopt($ch, CURLOPT_USERAGENT, 'Dalvik/2.1.0 (Linux; U; Android 13; SM-G960F Build/TP1A.220624.014) FacebookForAndroid/421.0.0.32.73'); // User-agent Facebook
     curl_setopt($ch, CURLOPT_COOKIE, $cookie); // Gunakan cookie dari form
+    curl_setopt($ch, CURLOPT_REFERER, 'https://web.facebook.com'); // Tambahkan referer
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Nonaktifkan verifikasi SSL untuk pengujian lokal
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Nonaktifkan verifikasi host SSL
 
     // Eksekusi cURL
     $html = curl_exec($ch);
