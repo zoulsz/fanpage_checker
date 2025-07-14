@@ -2,53 +2,80 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); // Mengizinkan CORS untuk frontend
 
-function getFanpageInfo($pageId, $accessToken) {
-    $url = "https://graph.facebook.com/v23.0/$pageId?fields=name,fan_count,created_time&access_token=$accessToken";
-    $response = @file_get_contents($url);
-    if ($response === false) {
-        return ['error' => 'Gagal mengakses API Facebook'];
-    }
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return ['error' => 'Gagal memproses data JSON'];
-    }
-    
-    if (isset($data['error'])) {
-        return ['error' => 'Error: ' . $data['error']['message']];
+require_once 'simple_html_dom.php'; // Pastikan file ini ada di folder yang sama
+
+function getFanpageInfo($pageUrl) {
+    // Inisialisasi array hasil
+    $result = [
+        'link' => $pageUrl,
+        'tahun' => 'Tidak ditemukan',
+        'nama_halaman' => 'Tidak ditemukan',
+        'jumlah_pengikut' => 'Tidak ditemukan'
+    ];
+
+    // Ambil konten halaman dengan user-agent untuk menghindari blokir
+    $context = stream_context_create([
+        'http' => [
+            'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        ]
+    ]);
+    $html = @file_get_contents($pageUrl, false, $context);
+    if ($html === false) {
+        return ['error' => 'Gagal mengakses halaman Facebook'];
     }
 
-    return [
-        'nama' => $data['name'] ?? 'Tidak ditemukan',
-        'jumlah_follower' => $data['fan_count'] ?? 'Tidak ditemukan',
-        'tahun_pembuatan' => substr($data['created_time'] ?? 'Tidak ditemukan', 0, 4)
-    ];
+    // Buat objek HTML DOM
+    $dom = new simple_html_dom();
+    $dom->load($html);
+
+    // Ekstrak nama halaman (dari judul atau elemen header)
+    $title = $dom->find('title', 0);
+    if ($title) {
+        $result['nama_halaman'] = trim($title->plaintext);
+    } else {
+        $header = $dom->find('h1', 0); // Coba dari elemen header
+        if ($header) {
+            $result['nama_halaman'] = trim($header->plaintext);
+        }
+    }
+
+    // Ekstrak tahun (berdasarkan pola seperti "2018" di nama atau deskripsi)
+    $metaDescription = $dom->find('meta[name=description]', 0);
+    if ($metaDescription && preg_match('/(\d{4})/', $metaDescription->content, $matches)) {
+        $result['tahun'] = $matches[1];
+    } else {
+        // Coba dari teks di halaman
+        $yearElements = $dom->find('span, div');
+        foreach ($yearElements as $element) {
+            $text = trim($element->plaintext);
+            if (preg_match('/(\d{4})/', $text, $matches)) {
+                $result['tahun'] = $matches[1];
+                break;
+            }
+        }
+    }
+
+    // Ekstrak jumlah pengikut (berdasarkan pola seperti "105 pengikut")
+    $followerElements = $dom->find('span, div');
+    foreach ($followerElements as $element) {
+        $text = trim($element->plaintext);
+        if (strpos($text, 'pengikut') !== false || strpos($text, 'followers') !== false || strpos($text, 'suka') !== false) {
+            $number = preg_replace('/[^0-9]/', '', $text);
+            if ($number) {
+                $result['jumlah_pengikut'] = $number;
+                break;
+            }
+        }
+    }
+
+    return $result;
 }
 
 $pageUrl = isset($_GET['url']) ? $_GET['url'] : '';
-$accessToken = isset($_GET['access_token']) ? $_GET['access_token'] : '';
-
 if (!$pageUrl) {
     echo json_encode(['error' => 'URL halaman tidak diberikan']);
     exit;
 }
 
-if (!$accessToken) {
-    echo json_encode(['error' => 'Access Token tidak diberikan']);
-    exit;
-}
-
-// Ekstrak ID atau username dari URL
-try {
-    $urlParts = parse_url($pageUrl, PHP_URL_PATH);
-    $urlParts = explode('/', trim($urlParts, '/'));
-    $pageId = end($urlParts);
-    if (empty($pageId) || !preg_match('/^[a-zA-Z0-9_]+$/', $pageId)) {
-        throw new Exception('ID halaman tidak valid');
-    }
-} catch (Exception $e) {
-    echo json_encode(['error' => 'URL halaman tidak valid: ' . $e->getMessage()]);
-    exit;
-}
-
-echo json_encode(getFanpageInfo($pageId, $accessToken));
+echo json_encode(getFanpageInfo($pageUrl));
 ?>
