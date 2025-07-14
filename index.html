@@ -17,7 +17,7 @@
         <form id="fanpageForm" class="mb-3">
             <div class="mb-3">
                 <label for="pageUrl" class="form-label">Link Halaman Facebook</label>
-                <input type="url" class="form-control" id="pageUrl" placeholder="Masukkan link fanspage (contoh: https://www.facebook.com/nasa)" required>
+                <input type="url" class="form-control" id="pageUrl" placeholder="Masukkan link fanspage (contoh: https://web.facebook.com/profile.php?id=100095302963485)" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Cek Informasi</button>
         </form>
@@ -47,9 +47,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Hasil</h5>
-                            <p class="card-text"><strong>Nama:</strong> ${data.nama}</p>
-                            <p class="card-text"><strong>Jumlah Follower:</strong> ${data.jumlah_follower}</p>
-                            <p class="card-text"><strong>Tahun Pembuatan:</strong> ${data.tahun_pembuatan}</p>
+                            <p class="card-text"><strong>Link:</strong> ${data.link}</p>
+                            <p class="card-text"><strong>Nama Halaman:</strong> ${data.nama_halaman}</p>
+                            <p class="card-text"><strong>Tahun:</strong> ${data.tahun}</p>
+                            <p class="card-text"><strong>Jumlah Pengikut:</strong> ${data.jumlah_pengikut}</p>
                         </div>
                     </div>
                 `;
