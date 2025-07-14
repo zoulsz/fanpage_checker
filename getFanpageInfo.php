@@ -34,6 +34,6 @@ try {
     exit;
 }
 
-$accessToken = getenv('ACCESS_TOKEN') ?: 'TOKEN_AKSES_ANDA'; // Ganti dengan token Anda
+$accessToken = getenv('ACCESS_TOKEN') ?: 'EAAY5C5ZBneYUBPOMGXVOFfTQZBro5yMu9WVE0qPdolVJ7KpPmfILD1rOPPZAxORzIoZAM3JQ7TB4A1sFDeM96cxloQZBm3nwJ6hXF53NODP4rLca8ZB87pPua2ZCOMWak9igmTajYeQYCZAo9MgMa9vUJe3IXwZBaJx49KX2mcxZBVo3lDx8Wt9Tx5sZAr0epk2S7gZAsWinifPo0Qfq0jHA7lGZCqTWg2QnvQFB9kmaggNf4JEQasDgfZA7D4gaYs8nnZAeJD0FWqeOSIaA1ZB7W3snfZAHQRe7BamzNnU2UgAZDZD'; // Ganti dengan token Anda
 echo json_encode(getFanpageInfo($pageId, $accessToken));
 ?>
